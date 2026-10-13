@@ -1,7 +1,7 @@
 import os, json, random, urllib.request
 from playwright.sync_api import sync_playwright
 
-URL = "https://minutes.noon.com/egypt-en/search/?f[discount_min]=80"
+URL = "https://minutes.noon.com/egypt-en/search/?f[discount_min]=70"
 TOPIC = os.environ["NTFY_TOPIC"]
 TEST = os.environ.get("TEST") == "1"
 
@@ -73,7 +73,7 @@ new = {h: t for h, t in found.items() if h not in seen}
 
 if new:
     lines = [t + "\n" + h for h, t in list(new.items())[:10]]
-    notify("Noon Minutes 80 percent off", "\n\n".join(lines))
+    notify("Noon Minutes 70 percent off", "\n\n".join(lines))
 elif TEST:
     notify(
         "Noon test",
