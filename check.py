@@ -1,7 +1,7 @@
 import os, json, random, urllib.request
 from playwright.sync_api import sync_playwright
 
-URL = "https://minutes.noon.com/egypt-en/search/?f[discount_min]=70"
+URL = "https://minutes.noon.com/egypt-en/search/?f[discount_min]=39"
 TOPIC = os.environ["NTFY_TOPIC"]
 TEST = os.environ.get("TEST") == "1"
 
