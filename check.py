@@ -13,16 +13,28 @@ def notify(title, msg):
     )
     urllib.request.urlopen(req, timeout=30)
 
+items = []
+page_title = ""
+body = ""
+error = ""
+
 with sync_playwright() as p:
     b = p.chromium.launch()
     pg = b.new_page(locale="en-EG")
-    pg.goto(URL, wait_until="networkidle", timeout=90000)
-    pg.wait_for_timeout(5000)
-    items = pg.eval_on_selector_all(
-        'a[href*="/now-product/"]',
-        "els => els.map(e => [e.href, e.innerText])",
-    )
-    page_title = pg.title()
+    try:
+        pg.goto(URL, wait_until="domcontentloaded", timeout=60000)
+        pg.wait_for_timeout(10000)
+    except Exception as e:
+        error = str(e)[:150]
+    try:
+        items = pg.eval_on_selector_all(
+            'a[href*="/now-product/"]',
+            "els => els.map(e => [e.href, e.innerText])",
+        )
+        page_title = pg.title()
+        body = " ".join(pg.inner_text("body").split())[:200]
+    except Exception as e:
+        error += " | " + str(e)[:100]
     b.close()
 
 found = {}
@@ -40,6 +52,10 @@ if new:
     lines = [t + "\n" + h for h, t in list(new.items())[:10]]
     notify("Noon Minutes 80 percent off", "\n\n".join(lines))
 elif TEST:
-    notify("Noon test", "products found: %d | page: %s" % (len(found), page_title))
+    notify(
+        "Noon test",
+        "products: %d | title: %s | error: %s | text: %s"
+        % (len(found), page_title, error, body),
+    )
 
 json.dump(sorted(seen | set(found)), open("seen.json", "w"))
