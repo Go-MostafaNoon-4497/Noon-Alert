@@ -81,4 +81,6 @@ elif TEST:
         % (len(found), page_title, error, body),
     )
 
-json.dump(sorted(seen | set(found)), open("seen.json", "w"))
+# نحفظ المنتجات الموجودة دلوقتي بس (ولو الصفحة اتحمّلت صح)
+if not error:
+    json.dump(sorted(found), open("seen.json", "w"))
